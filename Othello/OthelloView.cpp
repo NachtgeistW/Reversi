@@ -171,14 +171,36 @@ void COthelloView::DrawBoard(CDC *pDC)
 void COthelloView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	CView::OnLButtonDown(nFlags, point);
-	if (!IsOutOfEdge(point) && !play->IsInvalidPlay(point))
+	int changePlayer = 0;
+	if (!IsOutOfEdge(point) && play->ReversiCheck(point) && play->IsAdjChessDif(point))
 	{
-		CPoint location = play->CalChessPoint(point);
-		if (play->GetRound() % 2 == 0)
+		CPoint location = play->CalChessView(point);
+		if (play->GetPlayer() == play->black)
 			DrawChess(location, blackPen);
 		else
 			DrawChess(location, whitePen);
 		play->IncRound();
+		//Actually it isn't the real game rule. 
+		if (play->IsAllowReverse(point, -1, 0)){	play->DoReverse(point, -1, 0);	changePlayer = 1;}
+		if (play->IsAllowReverse(point, -1, -1)){	play->DoReverse(point, -1, -1);	changePlayer = 1;}
+		if (play->IsAllowReverse(point, 0, -1)){	play->DoReverse(point, 0, -1);	changePlayer = 1;}
+		if (play->IsAllowReverse(point, 1, -1)){	play->DoReverse(point, 1, -1);	changePlayer = 1;}
+		if (play->IsAllowReverse(point, 1, 0)){	play->DoReverse(point, 1, 0);	changePlayer = 1;}
+		if (play->IsAllowReverse(point, 1, 1)){	play->DoReverse(point, 1, 1);	changePlayer = 1;}
+		if (play->IsAllowReverse(point, 0, 1)){	play->DoReverse(point, 0, 1);	changePlayer = 1;}
+		if (play->IsAllowReverse(point, -1, 1)){	play->DoReverse(point, -1, 1);	changePlayer = 1;}
+		
+		for (int i = 1; i <= 8; i++)
+			for (int j = 1; j <= 8; j++)
+			{
+				if (play->GetChessColor(i, j) == play->black)
+					DrawChess(i * 100, j * 100, blackPen);
+				else if (play->GetChessColor(i, j) == play->white)
+					DrawChess(i * 100, j * 100, whitePen);
+			}
+		if (changePlayer > 0)
+			play->ReverseColor();
+
 	}
 }
 

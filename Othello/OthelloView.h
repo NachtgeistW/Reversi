@@ -45,8 +45,8 @@ protected:
 public:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	void DrawChess(CPoint point, COLORREF color);
-	void DrawChess(int x, int y, COLORREF color);
-	void DrawBoard(CDC *pDC);
+	void DrawChess(int xv, int yv, COLORREF color);
+	void RefreshBoard();
 	bool IsOutOfEdge(CPoint point);
 
 	CPlay *play;
@@ -60,6 +60,9 @@ protected:
 
 public:
 	CRect getBoardSize();
+	void RefreshChess();
+	void ShowValid();
+	void RefreshMain();
 };
 
 #ifndef _DEBUG  // OthelloView.cpp 中的调试版本

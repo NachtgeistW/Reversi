@@ -4,7 +4,7 @@
 CPlay::CPlay()
 {
 	round = 0;
-	playerColor = black;
+	curPlayer = black;
 	for (int i = 0; i <= 8; i++)
 		for (int j = 0; j <= 8; j++)
 			boardArray[i][j] = empty;
@@ -17,6 +17,39 @@ CPlay::~CPlay()
 {
 }
 
+
+int CPlay::GameMain(CPoint point)
+{
+	//屏幕坐标x和y，x对应的是列y对应的是行
+	CPoint paw = CalChessArrow(point.x, point.y);
+	int xa = paw.x, ya = paw.y;
+	if (IsAdjChessDif(xa, ya))
+	{
+		//八方向搜索并转换棋子颜色
+		if (IsAllowReverse(xa, ya, -1, 0, curPlayer)) { ChessPlayed(xa, ya, curPlayer); DoReverse(xa, ya, -1, 0); }
+		if (IsAllowReverse(xa, ya, -1, -1, curPlayer)) { ChessPlayed(xa, ya, curPlayer); DoReverse(xa, ya, -1, -1); }
+		if (IsAllowReverse(xa, ya, 0, -1, curPlayer)) { ChessPlayed(xa, ya, curPlayer); DoReverse(xa, ya, 0, -1); }
+		if (IsAllowReverse(xa, ya, 1, -1, curPlayer)) { ChessPlayed(xa, ya, curPlayer); DoReverse(xa, ya, 1, -1); }
+		if (IsAllowReverse(xa, ya, 1, 0, curPlayer)) { ChessPlayed(xa, ya, curPlayer); DoReverse(xa, ya, 1, 0); }
+		if (IsAllowReverse(xa, ya, 1, 1, curPlayer)) { ChessPlayed(xa, ya, curPlayer); DoReverse(xa, ya, 1, 1); }
+		if (IsAllowReverse(xa, ya, 0, 1, curPlayer)) { ChessPlayed(xa, ya, curPlayer); DoReverse(xa, ya, 0, 1); }
+		if (IsAllowReverse(xa, ya, -1, 1, curPlayer)) { ChessPlayed(xa, ya, curPlayer); DoReverse(xa, ya, -1, 1); }
+
+		//对手能否落子，如果可以，交换执棋方
+		int check = curPlayer;
+		for (int i = edgeLT; i <= edgeRD; i++)
+		{
+			for (int j = edgeLT; j <= edgeRD; j++)
+				if (GlobalReversiCheck(i, j, ReverseColor(check)))
+				{
+					curPlayer = ReverseColor(curPlayer);
+					return 0;
+				}
+		}
+	}
+	return 0;
+}
+
 bool CPlay::IsGameOver()
 {
 	if (round >= 64)
@@ -24,20 +57,19 @@ bool CPlay::IsGameOver()
 	else
 		return false;
 }
+
 //Reversed player and return player's color
 int CPlay::ReverseColor() {
-	if (playerColor == black)playerColor = white;
-	else playerColor = black;
-	return playerColor;
+	if (curPlayer == black)curPlayer = white;
+	else curPlayer = black;
+	return curPlayer;
 }
-
 //only return the reversed color. It didn't do anything.
 int CPlay::ReverseColor(int color) {
 	if (color == black) return white;
 	else return black;
 }
-
-//Reverse the color of specified point. If the point is empty, do nothing. Attention: 0 <= x <= 7, 0 <= y <= 7
+//Reverse the color of specified point. If the point is empty, do nothing. Attention: edgeLT <= x, y <= edgeRD
 int CPlay::ReverseColor(int x, int y)
 {
 	if (boardArray[x][y] == black)	boardArray[x][y] = white;
@@ -45,31 +77,32 @@ int CPlay::ReverseColor(int x, int y)
 	return boardArray[x][y];
 }
 
+//屏幕坐标x和y，x对应的是列y对应的是行，所以棋盘本身就是反的
 // use this function to caculate the coordinates of the chess corresponding to the mouse placement
-CPoint CPlay::CalChessView(CPoint point)
+CPoint CPlay::CalChessView(int xv, int yv)
 {
 	int x = 0, y = 0;
-	x = point.x / 100 * 100;
-	y = point.y / 100 * 100;
+	x = xv / 100 * 100;
+	y = yv / 100 * 100;
 	return CPoint(x, y);
 }
 
-CPoint CPlay::CalChessArrow(CPoint point)
+CPoint CPlay::CalChessArrow(int xv, int yv)
 {
 	int x = 0, y = 0;
-	x = point.x / 100;
-	y = point.y / 100;
-	return CPoint(x, y);
+	x = xv / 100;
+	y = yv / 100;
+	return CPoint(y, x);
 }
 // using this function to check if player played a chess which can't reverse or in the place where a chess has been played
-bool CPlay::IsInvalidPlay(CPoint point)
+bool CPlay::IsInvalidPlay(int xa, int ya)
 {
 	bool boolen = 0;
-	int chessPointX = CalChessView(point).x / 100, chessPointY = CalChessView(point).y / 100;
+	int chessPointX = xa, chessPointY = ya;
 	int chessState = boardArray[chessPointX][chessPointY];
 	for (int i = 0; i < 8; i++)
 	{
-		if (IsAdjChessDif(point) && chessState == 0)
+		if (IsAdjChessDif(xa, ya) && chessState == 0)
 		{
 			boolen = false;
 			break;
@@ -86,29 +119,28 @@ bool CPlay::IsInvalidPlay(CPoint point)
 
 // using this function to detecte whether adjacent chesses is different from it.
 // If true, return true
-bool CPlay::IsAdjChessDif(CPoint point)
+bool CPlay::IsAdjChessDif(int xa, int ya)
 {
-	int chessPointX = CalChessView(point).x / 100, chessPointY = CalChessView(point).y / 100;
+	int chessPointX = xa, chessPointY = ya;
 	int chessState = boardArray[chessPointX][chessPointY];
 
-	if (boardArray[chessPointX - 1][chessPointY - 1] == ReverseColor(playerColor) ||
-		boardArray[chessPointX][chessPointY - 1] == ReverseColor(playerColor) ||
-		boardArray[chessPointX + 1][chessPointY - 1] == ReverseColor(playerColor) ||
-		boardArray[chessPointX - 1][chessPointY] == ReverseColor(playerColor) ||
-		boardArray[chessPointX + 1][chessPointY] == ReverseColor(playerColor) ||
-		boardArray[chessPointX - 1][chessPointY + 1] == ReverseColor(playerColor) ||
-		boardArray[chessPointX][chessPointY + 1] == ReverseColor(playerColor) ||
-		boardArray[chessPointX + 1][chessPointY + 1] == ReverseColor(playerColor) )
+	if (boardArray[chessPointX - 1][chessPointY - 1] == ReverseColor(curPlayer) ||
+		boardArray[chessPointX][chessPointY - 1] == ReverseColor(curPlayer) ||
+		boardArray[chessPointX + 1][chessPointY - 1] == ReverseColor(curPlayer) ||
+		boardArray[chessPointX - 1][chessPointY] == ReverseColor(curPlayer) ||
+		boardArray[chessPointX + 1][chessPointY] == ReverseColor(curPlayer) ||
+		boardArray[chessPointX - 1][chessPointY + 1] == ReverseColor(curPlayer) ||
+		boardArray[chessPointX][chessPointY + 1] == ReverseColor(curPlayer) ||
+		boardArray[chessPointX + 1][chessPointY + 1] == ReverseColor(curPlayer) )
 		return true;
 	else
 		return false;
 }
 
-
-bool CPlay::IsAllowReverse(CPoint point, int i, int j)
+//i and j are the direction. To search for left side, set i as -1; for upper side, set j as -1.
+bool CPlay::IsAllowReverse(int xa, int ya, int i, int j, int player)
 {
-	CPoint curPoint = CalChessArrow(point);
-	int x = curPoint.x, y = curPoint.y, search = 0;
+	int x = xa, y = ya, search = 0;
 	while (x >= 1 && x <= 8 && y >= 1 && y <= 8)
 	{
 		x += i;
@@ -134,7 +166,7 @@ bool CPlay::IsAllowReverse(CPoint point, int i, int j)
 		else
 			return false;
 			*/
-		if (boardArray[x][y] == playerColor)
+		if (boardArray[x][y] == player)
 			return search > 0;
 		else if (boardArray[x][y] == empty)
 			return false;
@@ -146,30 +178,32 @@ bool CPlay::IsAllowReverse(CPoint point, int i, int j)
 	return false;
 }
 
-// using this function to reverse chess color on board. Use with ReverseColor()
-void CPlay::DoReverse(CPoint point, int i, int j)
+// using this function to reverse from 8 direction
+bool CPlay::GlobalReversiCheck(int xa, int ya, int player)
 {
-	CPoint curPoint = CalChessArrow(point);
-	int x = curPoint.x, y = curPoint.y;
+	bool boolen = (IsAllowReverse(xa, ya, -1, 0, player)) || (IsAllowReverse(xa, ya, -1, -1, player)) ||
+		(IsAllowReverse(xa, ya, 0, -1, player)) || (IsAllowReverse(xa, ya, 1, -1, player)) ||
+		(IsAllowReverse(xa, ya, 1, 0, player)) || (IsAllowReverse(xa, ya, 1, 1, player)) ||
+		(IsAllowReverse(xa, ya, 0, 1, player)) || (IsAllowReverse(xa, ya, -1, 1, player));
+	return boolen;
+}
+
+// using this function to reverse chess color on board. Use with ReverseColor()
+void CPlay::DoReverse(int xa, int ya, int i, int j)
+{
+	int x = xa, y = ya;
 	while (x >= 1 && x <= 8 && y >= 1 && y <= 8)
 	{
 		x += i;
 		y += j;
-		if (boardArray[x][y] == empty || boardArray[x][y] == playerColor)
+		if (boardArray[x][y] == empty || boardArray[x][y] == curPlayer)
 			break;
 		else
 			ReverseColor(x, y);
 	}
-
 }
 
-
-// using this function to reverse from 8 direction
-bool CPlay::ReversiCheck(CPoint point)
+void CPlay::ChessPlayed(int xa, int ya, int color)
 {
-	bool boolen = (IsAllowReverse(point, -1, 0)) || (IsAllowReverse(point, -1, -1)) ||
-		(IsAllowReverse(point, 0, -1)) || (IsAllowReverse(point, 1, -1)) ||
-		(IsAllowReverse(point, 1, 0)) || (IsAllowReverse(point, 1, 1)) ||
-		(IsAllowReverse(point, 0, 1)) || (IsAllowReverse(point, -1, 1));
-	return boolen;
+	boardArray[xa][ya] = color;
 }

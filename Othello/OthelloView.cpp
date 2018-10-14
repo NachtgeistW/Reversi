@@ -63,15 +63,12 @@ void COthelloView::OnDraw(CDC* pDC)
 		return;
 
 	// TODO: 在此处为本机数据添加绘制代码
-	DrawBoard(pDC);
-
+	RefreshMain();
 	CPoint point = GetCursorPos(&point);
 	OnLButtonDown(MK_LBUTTON, point);
 }
 
-
 // COthelloView 打印
-
 
 void COthelloView::OnFilePrintPreview()
 {
@@ -133,9 +130,17 @@ COthelloDoc* COthelloView::GetDocument() const // 非调试版本是内联的
 
 // COthelloView 消息处理程序
 
-//using this function to draw chess board
-void COthelloView::DrawBoard(CDC *pDC)
+void COthelloView::RefreshMain()
 {
+	RefreshBoard();
+	RefreshChess();
+	ShowValid();
+}
+
+//using this function to draw chess board
+void COthelloView::RefreshBoard()
+{
+	CDC * pDC = GetDC();
 	//draw board
 	CBrush boardBrush = (HS_FDIAGONAL, RGB(0, 86, 31));
 	pDC->SelectObject(&boardBrush);
@@ -160,49 +165,57 @@ void COthelloView::DrawBoard(CDC *pDC)
 		pDC->DrawText(str, rcl, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 		pDC->DrawText(str, rcr, DT_CENTER | DT_VCENTER | DT_SINGLELINE);
 	}
-	//draw the 4 chess had played at the beginning of the game
-	DrawChess(400, 400, whitePen);
-	DrawChess(500, 500, whitePen);
-	DrawChess(400, 500, blackPen);
-	DrawChess(500, 400, blackPen);
+}
+
+//using this function to draw chess
+void COthelloView::RefreshChess()
+{
+	// TODO: 在此处添加实现代码.
+	for (int i = 1; i <= 8; i++)
+	{
+		for (int j = 1; j <= 8; j++)
+		{
+			if (play->GetChessColor(i, j) == play->black)
+				DrawChess(j * 100, i * 100, blackPen);
+			else if (play->GetChessColor(i, j) == play->white)
+				DrawChess(j * 100, i * 100, whitePen);
+		}
+	}
 
 }
 
 void COthelloView::OnLButtonDown(UINT nFlags, CPoint point)
 {
 	CView::OnLButtonDown(nFlags, point);
-	int changePlayer = 0;
-	if (!IsOutOfEdge(point) && play->ReversiCheck(point) && play->IsAdjChessDif(point))
+	if (!IsOutOfEdge(point))
 	{
-		CPoint location = play->CalChessView(point);
-		if (play->GetPlayer() == play->black)
-			DrawChess(location, blackPen);
-		else
-			DrawChess(location, whitePen);
-		play->IncRound();
-		//Actually it isn't the real game rule. 
-		if (play->IsAllowReverse(point, -1, 0)){	play->DoReverse(point, -1, 0);	changePlayer = 1;}
-		if (play->IsAllowReverse(point, -1, -1)){	play->DoReverse(point, -1, -1);	changePlayer = 1;}
-		if (play->IsAllowReverse(point, 0, -1)){	play->DoReverse(point, 0, -1);	changePlayer = 1;}
-		if (play->IsAllowReverse(point, 1, -1)){	play->DoReverse(point, 1, -1);	changePlayer = 1;}
-		if (play->IsAllowReverse(point, 1, 0)){	play->DoReverse(point, 1, 0);	changePlayer = 1;}
-		if (play->IsAllowReverse(point, 1, 1)){	play->DoReverse(point, 1, 1);	changePlayer = 1;}
-		if (play->IsAllowReverse(point, 0, 1)){	play->DoReverse(point, 0, 1);	changePlayer = 1;}
-		if (play->IsAllowReverse(point, -1, 1)){	play->DoReverse(point, -1, 1);	changePlayer = 1;}
-		
-		for (int i = 1; i <= 8; i++)
-			for (int j = 1; j <= 8; j++)
-			{
-				if (play->GetChessColor(i, j) == play->black)
-					DrawChess(i * 100, j * 100, blackPen);
-				else if (play->GetChessColor(i, j) == play->white)
-					DrawChess(i * 100, j * 100, whitePen);
-			}
-		if (changePlayer > 0)
-			play->ReverseColor();
-
+		play->GameMain(point);
+		RefreshMain();
 	}
 }
+
+//using this function to draw the valid place
+void COthelloView::ShowValid()
+{
+	for (int i = 1; i <= 8; i++)
+	{
+		for (int j = 1; j <= 8; j++)
+			if (play->GlobalReversiCheck(i, j, play->GetPlayer()) && play->IsAdjChessDif(i, j) && 
+				play->GetChessColor(i, j) == play->empty)
+			{
+				CDC * pDC = GetDC();
+				CBrush blackValidPointBrush(RGB(126, 206, 244));
+				CBrush whiteValidPointBrush(RGB(255, 219, 73));
+				if(play->GetPlayer() == play->black)
+					pDC->SelectObject(blackValidPointBrush);
+				else if (play->GetPlayer() == play->white)
+					pDC->SelectObject(whiteValidPointBrush);
+				pDC->Ellipse(j * 100 + 10, i * 100 + 10, j * 100 + 90, i * 100 + 90);
+				ReleaseDC(pDC);
+			}
+	}
+}
+
 
 bool COthelloView::IsOutOfEdge(CPoint point)
 {
@@ -220,14 +233,15 @@ void COthelloView::DrawChess(CPoint point, COLORREF color)
 	CBrush chessBrush = (HS_FDIAGONAL, color);
 	pDC->SelectObject(&chessBrush);
 	pDC->Ellipse(point.x + 10, point.y + 10, point.x + chessDia, point.y + chessDia);
+	ReleaseDC(pDC);
 }
 
-void COthelloView::DrawChess(int x, int y, COLORREF color)
+void COthelloView::DrawChess(int xv, int yv, COLORREF color)
 {
 	CDC * pDC = GetDC();
 	CBrush chessBrush = (HS_FDIAGONAL, color);
 	pDC->SelectObject(&chessBrush);
-	pDC->Ellipse(x + 10, y + 10, x + chessDia, y + chessDia);
+	pDC->Ellipse(xv + 10, yv + 10, xv + chessDia, yv + chessDia);
 }
 
 CRect COthelloView::getBoardSize()

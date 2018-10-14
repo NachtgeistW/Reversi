@@ -103,7 +103,9 @@
     <None Include="UserImages.bmp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CGameDlg.h" />
     <ClInclude Include="CPlay.h" />
+    <ClInclude Include="GUISetting.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="Othello.h" />
     <ClInclude Include="OthelloDoc.h" />
@@ -113,7 +115,9 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CGameDlg.cpp" />
     <ClCompile Include="CPlay.cpp" />
+    <ClCompile Include="GUISetting.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="Othello.cpp" />
     <ClCompile Include="OthelloDoc.cpp" />

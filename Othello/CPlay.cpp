@@ -23,7 +23,7 @@ int CPlay::GameMain(CPoint point)
 	//屏幕坐标x和y，x对应的是列y对应的是行
 	CPoint paw = CalChessArrow(point.x, point.y);
 	int xa = paw.x, ya = paw.y;
-	if (IsAdjChessDif(xa, ya))
+	if (!IsInvalidPlay(xa, ya))
 	{
 		//八方向搜索并转换棋子颜色
 		if (IsAllowReverse(xa, ya, -1, 0, curPlayer)) { ChessPlayed(xa, ya, curPlayer); DoReverse(xa, ya, -1, 0); }
@@ -94,7 +94,8 @@ CPoint CPlay::CalChessArrow(int xv, int yv)
 	y = yv / 100;
 	return CPoint(y, x);
 }
-// using this function to check if player played a chess which can't reverse or in the place where a chess has been played
+// using this function to check if player played a chess which can't reverse or in the place where a chess has been played.
+// If it's invalid, return true.
 bool CPlay::IsInvalidPlay(int xa, int ya)
 {
 	bool boolen = 0;
@@ -206,4 +207,16 @@ void CPlay::DoReverse(int xa, int ya, int i, int j)
 void CPlay::ChessPlayed(int xa, int ya, int color)
 {
 	boardArray[xa][ya] = color;
+}
+
+
+// using this function to count the number of specified chess.
+int CPlay::CountChessNum(int color)
+{
+	int num = 0;
+	for (int i = edgeLT; i <= edgeRD; i++)
+		for (int j = edgeLT; j <= edgeRD; j++)
+			if (boardArray[i][j] == color)
+				num++;
+	return num;
 }

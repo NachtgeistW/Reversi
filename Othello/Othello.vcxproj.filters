@@ -60,6 +60,12 @@
     <ClInclude Include="CPlay.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="GUISetting.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CGameDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Othello.cpp">
@@ -78,6 +84,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="CPlay.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GUISetting.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CGameDlg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

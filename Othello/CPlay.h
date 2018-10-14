@@ -44,5 +44,7 @@ public:
 	// using this function to reverse from 8 direction
 	bool GlobalReversiCheck(int xa, int ya, int player);
 	void ChessPlayed(int xa, int ya, int color);
+	// using this function to count the number of specified chess
+	int CountChessNum(int color);
 };
 

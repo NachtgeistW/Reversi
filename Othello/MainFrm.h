@@ -33,7 +33,9 @@ public:
 protected:  // 控件条嵌入成员
 	CMFCMenuBar       m_wndMenuBar;
 	CMFCToolBar       m_wndToolBar;
+public:
 	CMFCStatusBar     m_wndStatusBar;
+protected:
 	CMFCToolBarImages m_UserImages;
 
 // 生成的消息映射函数
@@ -43,6 +45,9 @@ protected:
 	afx_msg LRESULT OnToolbarCreateNew(WPARAM wp, LPARAM lp);
 	DECLARE_MESSAGE_MAP()
 
+public:
+	CMenu m_GameMenu;
+//	afx_msg void OnNewgame();
 };
 
 

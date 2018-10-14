@@ -11,6 +11,7 @@
 #include "OthelloDoc.h"
 #include "OthelloView.h"
 
+#include "GUISetting.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -167,6 +168,8 @@ protected:
 // 实现
 protected:
 	DECLARE_MESSAGE_MAP()
+public:
+//	afx_msg void OnNewgame();
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(CAboutDlg::IDD)
@@ -179,6 +182,7 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 }
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
+//	ON_COMMAND(ID_NEWGAME, &CAboutDlg::OnNewgame)
 END_MESSAGE_MAP()
 
 // 用于运行对话框的应用程序命令
@@ -207,7 +211,9 @@ void COthelloApp::SaveCustomState()
 {
 }
 
-// COthelloApp 消息处理程序
 
-
-
+//void CAboutDlg::OnNewgame()
+//{
+//	// TODO: 在此添加命令处理程序代码
+//
+//}

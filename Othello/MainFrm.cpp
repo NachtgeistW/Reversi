@@ -6,6 +6,7 @@
 #include "Othello.h"
 
 #include "MainFrm.h"
+#include "GUISetting.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -23,16 +24,16 @@ BEGIN_MESSAGE_MAP(CMainFrame, CFrameWndEx)
 	ON_WM_CREATE()
 	ON_COMMAND(ID_VIEW_CUSTOMIZE, &CMainFrame::OnViewCustomize)
 	ON_REGISTERED_MESSAGE(AFX_WM_CREATETOOLBAR, &CMainFrame::OnToolbarCreateNew)
+//	ON_COMMAND(ID_NEWGAME, &CMainFrame::OnNewgame)
 END_MESSAGE_MAP()
 
 static UINT indicators[] =
 {
 	ID_SEPARATOR,           // 状态行指示器
-	ID_INDICATOR_CAPS,
-	ID_INDICATOR_NUM,
-	ID_INDICATOR_SCRL,
+	ID_SEPARATOR,
+	ID_SEPARATOR,
+	ID_SEPARATOR,
 };
-
 // CMainFrame 构造/析构
 
 CMainFrame::CMainFrame()
@@ -46,6 +47,7 @@ CMainFrame::~CMainFrame()
 
 int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
+
 	if (CFrameWndEx::OnCreate(lpCreateStruct) == -1)
 		return -1;
 
@@ -120,7 +122,7 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	// 启用菜单个性化(最近使用的命令)
 	// TODO: 定义您自己的基本命令，确保每个下拉菜单至少有一个基本命令。
 	CList<UINT, UINT> lstBasicCommands;
-
+	/*
 	lstBasicCommands.AddTail(ID_FILE_NEW);
 	lstBasicCommands.AddTail(ID_FILE_OPEN);
 	lstBasicCommands.AddTail(ID_FILE_SAVE);
@@ -132,8 +134,8 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	lstBasicCommands.AddTail(ID_APP_ABOUT);
 	lstBasicCommands.AddTail(ID_VIEW_STATUS_BAR);
 	lstBasicCommands.AddTail(ID_VIEW_TOOLBAR);
-
-	CMFCToolBar::SetBasicCommands(lstBasicCommands);
+	*/
+	//CMFCToolBar::SetBasicCommands(lstBasicCommands);
 
 	return 0;
 }
@@ -221,4 +223,3 @@ BOOL CMainFrame::LoadFrame(UINT nIDResource, DWORD dwDefaultStyle, CWnd* pParent
 
 	return TRUE;
 }
-

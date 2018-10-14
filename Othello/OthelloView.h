@@ -5,6 +5,8 @@
 #pragma once
 #include "OthelloDoc.h"
 #include "CPlay.h"
+#include "GUISetting.h"
+#include "CGameDlg.h"
 
 class COthelloView : public CView
 {

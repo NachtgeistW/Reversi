@@ -12,6 +12,7 @@
 #include "OthelloDoc.h"
 #include "OthelloView.h"
 
+#include "GUISetting.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -64,6 +65,7 @@ void COthelloView::OnDraw(CDC* pDC)
 
 	// TODO: 在此处为本机数据添加绘制代码
 	RefreshMain();
+	SetStatusBar(play->CountChessNum(play->black), play->CountChessNum(play->white), play->GetPlayer());
 	CPoint point = GetCursorPos(&point);
 	OnLButtonDown(MK_LBUTTON, point);
 }
@@ -135,6 +137,7 @@ void COthelloView::RefreshMain()
 	RefreshBoard();
 	RefreshChess();
 	ShowValid();
+	SetStatusBar(play->CountChessNum(play->black), play->CountChessNum(play->white), play->GetPlayer());
 }
 
 //using this function to draw chess board

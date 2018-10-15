@@ -92,12 +92,13 @@ int CMainFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_wndStatusBar.SetIndicators(indicators, sizeof(indicators)/sizeof(UINT));
 
 	// TODO: 如果您不希望工具栏和菜单栏可停靠，请删除这五行
+	/*
 	m_wndMenuBar.EnableDocking(CBRS_ALIGN_ANY);
 	m_wndToolBar.EnableDocking(CBRS_ALIGN_ANY);
 	EnableDocking(CBRS_ALIGN_ANY);
 	DockPane(&m_wndMenuBar);
 	DockPane(&m_wndToolBar);
-
+	*/
 
 	// 启用 Visual Studio 2005 样式停靠窗口行为
 	CDockingManager::SetDockingMode(DT_SMART);

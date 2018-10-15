@@ -1,4 +1,6 @@
 #pragma once
+#define INVALID -100
+#define GAMEOVER 42
 
 class CPlay
 {
@@ -15,7 +17,7 @@ public:
 	//the main function of game
 	int GameMain(CPoint point);
 
-	bool IsGameOver();
+	int IsGameOver();
 
 	//Reverse player and return player's color
 	int ReverseColor();
@@ -31,13 +33,9 @@ public:
 	CPoint CalChessArrow(int xv, int yv);
 
 	// using this function to increase round count
-	void IncRound(void) { round++; };
-	// using this function to get the current number of round
-	int GetRound() { return round; };
-	// using this function to check if player played a chess out of rage or in the place where a chess has been played
-	bool IsInvalidPlay(int xa, int ya);
+	bool IsChessExist(int xa, int ya);
 	// using this function to detecte whether adjacent chesses is different from it
-	bool IsAdjChessDif(int xa, int ya);
+	bool IsAdjChessDif(int xa, int ya, int i, int j, int color);
 	bool IsAllowReverse(int xa, int ya, int i, int j, int player);
 	// using this function to reverse chess color on board. Use with ReverseColor(int x, int y)
 	void DoReverse(int xa, int ya, int i, int j);
@@ -46,5 +44,6 @@ public:
 	void ChessPlayed(int xa, int ya, int color);
 	// using this function to count the number of specified chess
 	int CountChessNum(int color);
+	CString Result();
 };
 

@@ -136,7 +136,7 @@ void COthelloView::RefreshMain()
 {
 	RefreshBoard();
 	RefreshChess();
-	ShowValid();
+	DrawValid();
 	SetStatusBar(play->CountChessNum(play->black), play->CountChessNum(play->white), play->GetPlayer());
 }
 
@@ -192,19 +192,26 @@ void COthelloView::OnLButtonDown(UINT nFlags, CPoint point)
 	CView::OnLButtonDown(nFlags, point);
 	if (!IsOutOfEdge(point))
 	{
-		play->GameMain(point);
-		RefreshMain();
+		if (play->GameMain(point) == INVALID)
+			MessageBox("你试图在无法翻转棋子的位置落子。", "操作非法", 0);
+		else if (play->GameMain(point) == GAMEOVER)
+		{
+			RefreshMain();
+			MessageBox(play->Result(), "游戏结束", 0);
+			exit(0);
+		}
+		else
+			RefreshMain();
 	}
 }
 
 //using this function to draw the valid place
-void COthelloView::ShowValid()
+void COthelloView::DrawValid()
 {
 	for (int i = 1; i <= 8; i++)
 	{
 		for (int j = 1; j <= 8; j++)
-			if (play->GlobalReversiCheck(i, j, play->GetPlayer()) && play->IsAdjChessDif(i, j) && 
-				play->GetChessColor(i, j) == play->empty)
+			if (play->GlobalReversiCheck(i, j, play->GetPlayer()) && play->GetChessColor(i, j) == play->empty)
 			{
 				CDC * pDC = GetDC();
 				CBrush blackValidPointBrush(RGB(126, 206, 244));
@@ -222,7 +229,6 @@ void COthelloView::ShowValid()
 
 bool COthelloView::IsOutOfEdge(CPoint point)
 {
-	// TODO: 在此处添加实现代码.
 	if (point.x < boardEdgeLAT || point.x > boardEdgeRAB ||
 		point.y < boardEdgeLAT || point.y > boardEdgeRAB)
 		return true;
@@ -245,9 +251,4 @@ void COthelloView::DrawChess(int xv, int yv, COLORREF color)
 	CBrush chessBrush = (HS_FDIAGONAL, color);
 	pDC->SelectObject(&chessBrush);
 	pDC->Ellipse(xv + 10, yv + 10, xv + chessDia, yv + chessDia);
-}
-
-CRect COthelloView::getBoardSize()
-{
-	return CRect(boardEdgeLAT, boardEdgeLAT, boardEdgeRAB, boardEdgeRAB);
 }

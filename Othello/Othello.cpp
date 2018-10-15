@@ -109,6 +109,9 @@ BOOL COthelloApp::InitInstance()
 	theApp.GetTooltipManager()->SetTooltipParams(AFX_TOOLTIP_TYPE_ALL,
 		RUNTIME_CLASS(CMFCToolTipCtrl), &ttParams);
 
+
+
+
 	// 注册应用程序的文档模板。文档模板
 	// 将用作文档、框架窗口和视图之间的连接
 	CSingleDocTemplate* pDocTemplate;
@@ -170,6 +173,8 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 //	afx_msg void OnNewgame();
+//	afx_msg void OnFileNew();
+//	afx_msg void OnBnClickedOk();
 };
 
 CAboutDlg::CAboutDlg() : CDialogEx(CAboutDlg::IDD)
@@ -183,6 +188,9 @@ void CAboutDlg::DoDataExchange(CDataExchange* pDX)
 
 BEGIN_MESSAGE_MAP(CAboutDlg, CDialogEx)
 //	ON_COMMAND(ID_NEWGAME, &CAboutDlg::OnNewgame)
+//ON_COMMAND(ID_FILE_NEW, &CAboutDlg::OnFileNew)
+ON_WM_LBUTTONDOWN()
+//ON_BN_CLICKED(IDOK, &CAboutDlg::OnBnClickedOk)
 END_MESSAGE_MAP()
 
 // 用于运行对话框的应用程序命令
@@ -210,10 +218,3 @@ void COthelloApp::LoadCustomState()
 void COthelloApp::SaveCustomState()
 {
 }
-
-
-//void CAboutDlg::OnNewgame()
-//{
-//	// TODO: 在此添加命令处理程序代码
-//
-//}

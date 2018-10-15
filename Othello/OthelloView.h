@@ -61,9 +61,8 @@ protected:
 		chessDia = 90;
 
 public:
-	CRect getBoardSize();
 	void RefreshChess();
-	void ShowValid();
+	void DrawValid();
 	void RefreshMain();
 };
 
